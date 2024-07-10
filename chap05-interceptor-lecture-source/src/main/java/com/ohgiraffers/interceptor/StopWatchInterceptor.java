@@ -20,14 +20,18 @@ public class StopWatchInterceptor implements HandlerInterceptor {
     }
 
 
-    // 마지막에 호출하는 메소드
+    // 전 처리
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        System.out.println("afterCompletion 호출함");
-        menuService.method();
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        System.out.println("preHandler 호출함");
+        long startTime = System.currentTimeMillis();
+
+        request.setAttribute("startTime", startTime);
+        // true면 컨트롤러를 이어서 호출한다. false이면 컨트롤러를 호출하지 않음.
+        return true;
     }
 
-    // 후처리
+    // 후 처리
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         System.out.println("postHandler 호출함");
@@ -40,14 +44,12 @@ public class StopWatchInterceptor implements HandlerInterceptor {
         modelAndView.addObject("interval", endTime-startTime);
     }
 
-    // 전처리
+    // 마지막에 호출하는 메소드
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        System.out.println("preHandler 호출함");
-        long startTime = System.currentTimeMillis();
-
-        request.setAttribute("startTime", startTime);
-        // true면 컨트롤러를 이어서 호출한다. false이면 컨트롤러를 호출하지 않음.
-        return true;
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        System.out.println("afterCompletion 호출함");
+        menuService.method();
     }
+
+
 }
